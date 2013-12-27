@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2AE57981-BB81-405A-9386-D9D705895A2B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ml</RootNamespace>
+    <AssemblyName>libml</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="code\BasicFunctions.cs" />
+    <Compile Include="code\Evaluator.cs" />
+    <Compile Include="code\FunctionLoader.cs" />
+    <Compile Include="code\LambdaStuff.cs" />
+    <Compile Include="code\Maths.cs" />
+    <Compile Include="core\Attributes.cs" />
+    <Compile Include="core\BasicAtom.cs" />
+    <Compile Include="core\BNodeWalker.cs" />
+    <Compile Include="core\FunctionExecutionContext.cs" />
+    <Compile Include="core\Interfaces.cs" />
+    <Compile Include="core\LambdaNode.cs" />
+    <Compile Include="core\NodeFactory.cs" />
+    <Compile Include="DependencyResolver.cs" />
+    <Compile Include="ML.cs" />
+    <Compile Include="NodeTypes.cs" />
+    <Compile Include="core\SequenceBuilder.cs" />
+    <Compile Include="core\SymbolContext.cs" />
+    <Compile Include="core\SymbolStorage.cs" />
+    <Compile Include="core\TokenConveyer.cs" />
+    <Compile Include="core\XListBuilder.cs" />
+    <Compile Include="core\XListNode.cs" />
+    <Compile Include="IMLNode.cs" />
+    <Compile Include="parser\InputParser.cs" />
+    <Compile Include="parser\ParserFeeder.cs" />
+    <Compile Include="parser\Token.cs" />
+    <Compile Include="parser\TokenType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceFormatter.cs" />
+    <Compile Include="UnknownSymbolException.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
