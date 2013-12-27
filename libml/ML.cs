@@ -8,7 +8,7 @@ using ml.code;
 
 namespace ml
 {
-	public static class ML
+	public class ML
 	{
 		static InputParser parser;
 		static SequenceBuilder sequenceBuilder;
@@ -21,7 +21,7 @@ namespace ml
 			FunctionLoader.LoadFunctions();
 		}
 
-		public static IMLNode EvalCommand(string expression)
+		public IMLNode EvalCommand(string expression)
 		{
 			var feeder = new ParserFeeder(expression);
 			parser.ParseSource(feeder);
@@ -33,7 +33,7 @@ namespace ml
 			return null;
 		}
 
-		public static string EvalAndPrint(string expression)
+		public string EvalAndPrint(string expression)
 		{
 			var result = EvalCommand(expression);
 			return SequenceFormatter.AsString(result);

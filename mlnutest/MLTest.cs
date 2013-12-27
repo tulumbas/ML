@@ -30,54 +30,57 @@ namespace mlnutest
 		[Test]
 		public void EvalStringTestEmpty()
 		{
-			var result = ML.EvalCommand("");
+			var eval = new ML();
+			var result = eval.EvalCommand("");
 			Assert.IsNull(result);
 		}
 
 		[Test]
 		public void EvalStringTest()
 		{
+			var eval = new ML();
 			for (int i = 0; i < testcases.GetLength(0); i++)
 			{
 				Trace.WriteLine(string.Format("Test {0}: {1}", i + 1, testcases[i, 0]));
-				var result = ml.ML.EvalCommand(testcases[i, 0]);
-				Assert.IsNotNull(result, "EvalString returned null");
-				var text = ml.SequenceFormatter.AsString(result);
-				Assert.IsNotEmpty(text, "Formatter could not print result");
-				Assert.AreEqual(testcases[i, 1], text);
+				var result = eval.EvalAndPrint(testcases[i, 0]);
+				Assert.AreEqual(testcases[i, 1], result);
 			}
 		}
 
 		[Test]
 		public void UnknownSymbolExceptionTest()
 		{
-			Assert.Catch<UnknownSymbolException>(() => ML.EvalAndPrint("asdasdsdfsdf"));
+			var eval = new ML();
+			Assert.Catch<UnknownSymbolException>(() => eval.EvalAndPrint("asdasdsdfsdf"));
 		}
 
 		[Test]
 		public void ProtectedSymbolsTest()
 		{
-			var ex = Assert.Catch(() => ML.EvalAndPrint("(setq t nil)"));
+			var eval = new ML();
+			var ex = Assert.Catch(() => eval.EvalAndPrint("(setq t nil)"));
 			Trace.WriteLine(ex.ToString());
-			ex = Assert.Catch(() => ML.EvalAndPrint("(setq nil t)"));
+			ex = Assert.Catch(() => eval.EvalAndPrint("(setq nil t)"));
 			Trace.WriteLine(ex.ToString());
 		}
 
 		[Test]
 		public void BadFunctionCalls()
 		{
-			Assert.Catch<InvalidOperationException>(() => ML.EvalAndPrint("((car '(a c)))"));
-			Assert.Catch<ArgumentException>(() => ML.EvalAndPrint("(zozozozo '(a c))"));
-			Assert.Catch<ArgumentException>(() => ML.EvalAndPrint("(car '(a c) '(z c))"));
-			Assert.Catch<ArgumentException>(() => ML.EvalAndPrint("(car)"));
+			var eval = new ML();
+			Assert.Catch<InvalidOperationException>(() => eval.EvalAndPrint("((car '(a c)))"));
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(zozozozo '(a c))"));
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(car '(a c) '(z c))"));
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(car)"));
 		}
 
 		[Test]
 		public void FunctionCalls()
 		{
-			Assert.AreEqual("zz", ML.EvalAndPrint("(defun zz (a b c) (cons c (cons (car a) (cdr b))))"));
-			Assert.AreEqual("((uu ii oo) qq tt yy)", ML.EvalAndPrint("(zz '(qq ww ee) '(rr tt yy) '(uu ii oo))"));
-			Assert.Catch<ArgumentException>(() => ML.EvalAndPrint("(zz)"));
+			var eval = new ML();
+			Assert.AreEqual("zz", eval.EvalAndPrint("(defun zz (a b c) (cons c (cons (car a) (cdr b))))"));
+			Assert.AreEqual("((uu ii oo) qq tt yy)", eval.EvalAndPrint("(zz '(qq ww ee) '(rr tt yy) '(uu ii oo))"));
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(zz)"));
 		}
 	}
 }

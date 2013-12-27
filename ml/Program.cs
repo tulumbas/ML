@@ -16,13 +16,14 @@ namespace mlrun
 				"(zz '(qq ww ee) '(rr tt yy) '(uu ii oo))"
 			};
 
+			var eval = new ml.ML();
 			
 			foreach (var line in strings)
 			{
 				Console.WriteLine("Source: "+ line);
 				try
 				{
-					var result = ml.ML.EvalCommand(line);
+					var result = eval.EvalCommand(line);
 					Console.Write("Result: ");
 					Console.WriteLine(ml.SequenceFormatter.AsString(result));
 					Console.WriteLine();
