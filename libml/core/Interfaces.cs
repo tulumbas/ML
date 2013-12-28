@@ -14,15 +14,6 @@ namespace ml.core
 	}
 
 	/// <summary>
-	/// Element of sequence, containing generic Left and Right part
-	/// </summary>
-	interface IListNode: IMLNode 
-	{
-		IMLNode Left { get; }
-		IMLNode Right { get; }
-	}
-
-	/// <summary>
 	/// Nodes creation
 	/// </summary>
 	interface INodeFactory
@@ -83,6 +74,18 @@ namespace ml.core
 		/// <returns></returns>
 		IMLNode EvalSequence(IListNode args, Dictionary<string, IMLNode> links);
 
-		//LocalSymbolStorage localScope { get; }
+		/// <summary>
+		/// Applies function to list of args
+		/// </summary>
+		/// <param name="funcNode"></param>
+		/// <param name="argList"></param>
+		/// <param name="localScope"></param>
+		/// <returns></returns>
+		IMLNode ApplyCall(IMLNode funcNode, IMLNode argList, Dictionary<string, IMLNode> localScope);
+
+		/// <summary>
+		/// Symbols cache
+		/// </summary>
+		ISymbolStorage Symbols { get; }
 	}
 }

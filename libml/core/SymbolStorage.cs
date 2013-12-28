@@ -6,11 +6,11 @@ using System.Collections.Concurrent;
 
 namespace ml.core
 {
-	class SymbolStorage //: ISymbolStorage
+	class SymbolStorage: ISymbolStorage
 	{
-		public static SymbolStorage Symbols { get; private set; }
+		//public static SymbolStorage Symbols { get; private set; }
 
-		static ConcurrentDictionary<string, SymbolContext> symbolDictionary;
+		ConcurrentDictionary<string, SymbolContext> symbolDictionary;
 		static readonly HashSet<string> protectedNames;
 
 		static SymbolStorage()
@@ -20,9 +20,11 @@ namespace ml.core
 				NormalizeName("T"),
 				NormalizeName("NIL")
 			});
+		}
 
+		public SymbolStorage()
+		{
 			symbolDictionary = new ConcurrentDictionary<string, SymbolContext>();
-			Symbols = new SymbolStorage();
 		}
 
 		public static string NormalizeName(string name)
@@ -30,10 +32,10 @@ namespace ml.core
 			return name.ToLowerInvariant();
 		}
 
-		public bool ContainsSymbol(string symbol)
-		{
-			return symbolDictionary.ContainsKey(symbol);
-		}
+		//public bool ContainsSymbol(string symbol)
+		//{
+		//   return symbolDictionary.ContainsKey(NormalizeName(symbol));
+		//}
 
 		public SymbolContext this[string symbol]
 		{

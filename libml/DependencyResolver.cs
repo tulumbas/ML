@@ -9,10 +9,12 @@ namespace ml
 	static class DependencyResolver
 	{
 		public static INodeFactory Builder { get; private set; }
+		public static ISymbolStorage Symbols { get; private set; }
 
 		static DependencyResolver()
 		{
-			Builder = new NodeFactory();
+			Symbols = new SymbolStorage();
+			Builder = new NodeFactory(Symbols);
 		}
 	}
 }

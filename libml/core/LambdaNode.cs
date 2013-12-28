@@ -48,11 +48,11 @@ namespace ml.core
 		public string Text { get; private set; }
 		public FunctionExecutionContext ExecutionContext { get; private set; }
 
-#if DEBUG
-		public override string ToString()
-		{
-			return Text;
-		}
-#endif
+//#if DEBUG
+//      public override string ToString()
+//      {
+//         return Text;
+//      }
+//#endif
 	}
 }

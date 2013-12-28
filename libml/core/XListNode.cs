@@ -14,26 +14,26 @@ namespace ml.core
 		public IMLNode Left { get; internal set; }
 		public IMLNode Right { get; internal set; }
 
-		public override string ToString()
-		{
-			var sb = new StringBuilder("< ");
-			PrintBranch(sb, Left);
-			sb.Append(" || ");
-			PrintBranch(sb, Right);
-			sb.Append(" >");
-			return sb.ToString();
-		}
+		//public override string ToString()
+		//{
+		//   var sb = new StringBuilder("< ");
+		//   PrintBranch(sb, Left);
+		//   sb.Append(" || ");
+		//   PrintBranch(sb, Right);
+		//   sb.Append(" >");
+		//   return sb.ToString();
+		//}
 
-		private void PrintBranch(StringBuilder sb, IMLNode branch)
-		{
-			if (branch.IsAtom)
-			{
-				sb.Append(branch.ToString());
-			}
-			else
-			{
-				sb.Append("list");
-			}
-		}
+		//private void PrintBranch(StringBuilder sb, IMLNode branch)
+		//{
+		//   if (branch.IsAtom)
+		//   {
+		//      sb.Append(branch.ToString());
+		//   }
+		//   else
+		//   {
+		//      sb.Append("list");
+		//   }
+		//}
 	}
 }

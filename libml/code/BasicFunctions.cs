@@ -11,6 +11,12 @@ namespace ml.code
 	{
 		#region Main functions
 		[BNodeFunc(NumberOfArguments = 1)]
+		static IMLNode Atom(IListNode args, IEvaluator code)
+		{
+			return args.Left.IsAtom ? code.Builder.GetT() : code.NIL;
+		}
+
+		[BNodeFunc(NumberOfArguments = 1)]
 		static IMLNode Car(IListNode args, IEvaluator environmnet)
 		{
 			if (args.Left.IsNIL)
@@ -151,7 +157,7 @@ namespace ml.code
 			}
 
 			var value = (args.Right as IListNode).Left;
-			SymbolStorage.Symbols.SetValue((symbol as IAtom).Text, value);
+			environmnet.Symbols.SetValue((symbol as IAtom).Text, value);
 			return value;
 		}
 
@@ -165,7 +171,7 @@ namespace ml.code
 
 		#region CADR
 
-		public static void SetupCadrs(SymbolStorage storage, INodeFactory builder)
+		public static void SetupCadrs(ISymbolStorage storage, INodeFactory builder)
 		{
 			var lambdaList = new string[] { "x" };
 
@@ -200,8 +206,16 @@ namespace ml.code
 
 		#endregion
 
+		#region Others
+		//[BNodeFunc(NumberOfArguments = 2)]
+		//static IMLNode Nth(IListNode args, IEvaluator code)
+		//{
+			
+		//}
+		#endregion
+
 		#region helpers
-		private static IListNode Check4List(IMLNode source, string funcName)
+		public static IListNode Check4List(IMLNode source, string funcName)
 		{
 			if (source.IsAtom)
 			{

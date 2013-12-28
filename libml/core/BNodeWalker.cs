@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ml.core
 {
-	class BNodeWalker : IEnumerable<IListNode>
+	public class BNodeWalker : IEnumerable<IListNode>
 	{
 		class NodeEnumerator : IEnumerator<IListNode>
 		{
@@ -69,7 +69,7 @@ namespace ml.core
 
 			public void Reset()
 			{
-				_current = first;
+				_current = null;
 			}
 		}
 
@@ -86,12 +86,14 @@ namespace ml.core
 
 		public IEnumerator<IListNode> GetEnumerator()
 		{
+			enumerator.Reset();
 			return enumerator as IEnumerator<IListNode>;
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return enumerator;
+			enumerator.Reset();
+			return enumerator as System.Collections.IEnumerator;
 		}
 	}
 

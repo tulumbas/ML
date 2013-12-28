@@ -21,15 +21,17 @@ namespace ml.core
 		public const string QUOTE = "quote";
 		
 		TokenConveyer Q;
-		//public static INodeFactory Builder { get; set; }
+		public INodeFactory Builder { get; private set; }
+
+		public SequenceBuilder(INodeFactory builder)
+		{
+			Builder = builder;
+		}
 		
 		public IMLNode Process(List<Token> tokens)
 		{
-			if(tokens.Count < 1)
-			{
-				ProcessingError("Empty token queue");
-			}
 			Q = new TokenConveyer(tokens);
+			Q.SkipWs();
 			return ProcessSequenceItem();
 		}
 
@@ -41,7 +43,7 @@ namespace ml.core
 		private IMLNode ProcessSequence()
 		{			
 			//IBListNode firstNode = null;
-			IListBuilder list = DependencyResolver.Builder.CreateListBuilder();
+			IListBuilder list = Builder.CreateListBuilder();
 			while (!(Q.CurrentType == TokenType.RPar || Q.IsEOF))
 			{
 				// next item in sequence					
@@ -61,10 +63,9 @@ namespace ml.core
 			IMLNode node;
 			if (Q.CurrentType == TokenType.Quote)
 			{
-				Assert(TokenType.Quote, true);
-
-				var quote = DependencyResolver.Builder.CreateAtom(QUOTE, NodeTypes.Symbol);
-				var list = DependencyResolver.Builder.CreateListBuilder(quote);
+				Q.NextSkipWs();
+				var quote = Builder.CreateAtom(QUOTE, NodeTypes.Symbol);
+				var list = Builder.CreateListBuilder(quote);
 				var quotedChild = ProcessSequenceItem();
 				list.Append(quotedChild);
 
@@ -103,32 +104,31 @@ namespace ml.core
 			switch (Q.CurrentType)
 			{
 				case TokenType.Number:
-					atomNode = DependencyResolver.Builder.CreateAtom(Q.Current.Value, NodeTypes.DecimalNumber);
+					atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.Number);
 					break;
 
 				case TokenType.Word:
 					var value = Q.Current.Value.ToLower();
 					if (value == "t")
 					{
-						atomNode = DependencyResolver.Builder.GetT();
+						atomNode = Builder.GetT();
 					}
 					else if (value == "nil")
 					{
-						atomNode = DependencyResolver.Builder.GetNIL();
+						atomNode = Builder.GetNIL();
 					}
 					else
 					{
-						atomNode = DependencyResolver.Builder.CreateAtom(Q.Current.Value, NodeTypes.Symbol);
+						atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.Symbol);
 					}
 					break;
 
 				case TokenType.TextLiteral:
-					atomNode = DependencyResolver.Builder.CreateAtom(Q.Current.Value, NodeTypes.TextLiteral);
+					atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.TextLiteral);
 					break;
 
 				default:
-					ProcessingError("Unexpected type of lexem");
-					break;
+					throw new BadInputException("Unexpected type of lexem or unexpected end of expression");
 			}
 
 			Q.NextSkipWs();
@@ -144,24 +144,24 @@ namespace ml.core
 		/// </returns>
 		private IMLNode ProcessList()
 		{
-			Assert(TokenType.LPar, true);
+			Assert(TokenType.LPar);
 			IMLNode node = ProcessSequence();
-			Assert(TokenType.RPar, true);
+			Assert(TokenType.RPar);
 			return node;
 		}
 
-		private void ProcessingError(string message)
-		{
-			throw new ApplicationException(message);
-		}
+		//private void ProcessingError(string message)
+		//{
+		//   throw new BadInputException(message);
+		//}
 
-		private void Assert(TokenType type, bool skipWs)
+		private void Assert(TokenType type)
 		{
 			if (Q.CurrentType != type)
 			{
-				ProcessingError(type.ToString() + " expected");
+				throw new BadInputException(type.ToString() + " expected");
 			}
-			if (skipWs) { Q.NextSkipWs(); } else { Q.Next(); }
+			Q.NextSkipWs(); 
 		}
 	}
 }

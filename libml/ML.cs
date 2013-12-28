@@ -11,14 +11,22 @@ namespace ml
 	public class ML
 	{
 		static InputParser parser;
-		static SequenceBuilder sequenceBuilder;
+		SequenceBuilder sequenceBuilder;		
+		IEvaluator evaluator;
 
 		static ML()
 		{
 			// initialization
 			parser = new InputParser();
-			sequenceBuilder = new SequenceBuilder();
-			FunctionLoader.LoadFunctions();
+		}
+
+		public ML()
+		{
+			var upperScope = new SymbolStorage();
+			var factory = new NodeFactory(upperScope);
+			sequenceBuilder = new SequenceBuilder(factory);
+			FunctionLoader.LoadFunctions(upperScope, factory);
+			evaluator = new Evaluator(upperScope, factory);
 		}
 
 		public IMLNode EvalCommand(string expression)
@@ -28,7 +36,7 @@ namespace ml
 			if (parser.TokenQueue.Count > 1) // more then just EOL
 			{
 				var sequence = sequenceBuilder.Process(parser.TokenQueue);
-				return Evaluator.Instance.EvalNode(sequence, null);
+				return evaluator.EvalNode(sequence, null);
 			}
 			return null;
 		}

@@ -16,9 +16,16 @@ namespace ml.core
 		public bool IsCompiled { get; private set; }
 
 		/// <summary>
-		/// If greater then -1, function call should be checked against number of arguments used.
+		/// If greater then -1, function call 
+		/// should be checked against number of arguments used.
 		/// </summary>
 		public int NumberOfArguments { get; set; }
+
+		/// <summary>
+		/// If greater then -1, function call 
+		/// should be checked to have at least this number of args
+		/// </summary>
+		public int MinimalNumberOfArguments { get; set; }
 
 		/// <summary>
 		/// If not "None", prohibits arguments evaluation beforehand function call

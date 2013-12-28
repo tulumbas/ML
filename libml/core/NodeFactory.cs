@@ -8,6 +8,7 @@ namespace ml.core
 	class NodeFactory : INodeFactory
 	{
 		static IAtom NIL, T;
+		private ISymbolStorage scope;
 
 		static NodeFactory()
 		{
@@ -15,24 +16,23 @@ namespace ml.core
 			T = new BasicAtom("T", NodeTypes.T);
 		}
 
+		public NodeFactory(ISymbolStorage symbols)
+		{
+			scope = symbols;
+		}
+
 		public IAtom CreateAtom(string value, NodeTypes atomType)
 		{
 			switch (atomType)
 			{
-				case NodeTypes.List:
-					throw new ArgumentException("Can't create atom with nodeType LIST");
-
-				case NodeTypes.NIL: return NIL;
-				case NodeTypes.T: return T;
-
 				case NodeTypes.Symbol:
 				case NodeTypes.TextLiteral:
-					SymbolStorage.Symbols.AddSymbol(value);
+					scope.AddSymbol(value);
 					return new BasicAtom(value, atomType);
 
-				case NodeTypes.DecimalNumber:
-				case NodeTypes.IntegerNumber:
-					return new BasicAtom(value, atomType);
+				case NodeTypes.Number:
+					return new BasicAtom(value, value.Contains('.') ? 
+						NodeTypes.DecimalNumber : NodeTypes.IntegerNumber);
 
 				default:
 					throw new ArgumentException("Can't create atom with nodeType: " + atomType.ToString());
@@ -49,11 +49,11 @@ namespace ml.core
 			return NIL;
 		}
 
-		public IListNode Merge(IListNode listA, IListNode listB)
-		{
-			(listA as XListNode).Right = listB;
-			return listA;
-		}
+		//public IListNode Merge(IListNode listA, IListNode listB)
+		//{
+		//   (listA as XListNode).Right = listB;
+		//   return listA;
+		//}
 
 		public IListBuilder CreateListBuilder()
 		{

@@ -12,7 +12,7 @@ namespace mlnutest
 	public class MLTest
 	{
 		string[,] testcases = new string[,] {
-			{"(eq 'a '(a))", "NIL"},
+			{" (eq 'a '(a))", "NIL"},
 			{"(eq (eval (car (cdr (cons 'a '((car '(z x c)) c))))) 'z)", "T"},
 			{"(car (cdr '(a b c)))", "b"},
 			{"(car (cdr '()))", "NIL"},
@@ -26,6 +26,22 @@ namespace mlnutest
 			{"(lambda (a) (car '(z x)))","#FUNCTION(a):((car (quote (z x))))"},
 			{"((lambda (x y) (car x) (cadr y)) '(q w e) '(a s d))", "s"},
 		};
+
+		[Test]
+		public void ProcessingWrongInputTest()
+		{
+			var eval = new ML();
+
+			var ex = Assert.Catch<BadInputException>(() => eval.EvalAndPrint(")"));
+			ex = Assert.Catch<BadInputException>(() => eval.EvalAndPrint("("));
+			ex = Assert.Catch<BadInputException>(() => eval.EvalAndPrint("(()"));
+			ex = Assert.Catch<BadInputException>(() => eval.EvalAndPrint("0.0.0"));
+			ex = Assert.Catch<BadInputException>(() => eval.EvalAndPrint("0.a"));
+			Assert.AreEqual("\"a ( \\\" b\"", eval.EvalAndPrint("'\"a ( \\\" b\""));
+			Assert.AreEqual("a", eval.EvalAndPrint("'\na"));
+			Assert.Catch<BadInputException>(() => eval.EvalAndPrint("'\\"));
+			Assert.Catch<BadInputException>(() => eval.EvalAndPrint("';"));
+		}
 
 		[Test]
 		public void EvalStringTestEmpty()
@@ -59,9 +75,9 @@ namespace mlnutest
 		{
 			var eval = new ML();
 			var ex = Assert.Catch(() => eval.EvalAndPrint("(setq t nil)"));
-			Trace.WriteLine(ex.ToString());
+			//Trace.WriteLine(ex.ToString());
 			ex = Assert.Catch(() => eval.EvalAndPrint("(setq nil t)"));
-			Trace.WriteLine(ex.ToString());
+			//Trace.WriteLine(ex.ToString());
 		}
 
 		[Test]
@@ -71,6 +87,7 @@ namespace mlnutest
 			Assert.Catch<InvalidOperationException>(() => eval.EvalAndPrint("((car '(a c)))"));
 			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(zozozozo '(a c))"));
 			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(car '(a c) '(z c))"));
+			Assert.Catch<InvalidOperationException>(() => eval.EvalAndPrint("(t '(a c) '(z c))"));
 			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(car)"));
 		}
 

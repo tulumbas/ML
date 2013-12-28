@@ -9,6 +9,7 @@ namespace ml.core
 	sealed class BNodeFuncAttribute : Attribute
 	{
 		int _numberOfArgs = -1;
+		int _miminalNumberOfArgs = -1;
 		public BNodeFuncAttribute()
 		{
 		}
@@ -30,6 +31,18 @@ namespace ml.core
 			set
 			{
 				_numberOfArgs = value;
+			}
+		}
+
+		public int MinimalNumberOfArguments
+		{
+			get
+			{
+				return _miminalNumberOfArgs;
+			}
+			set
+			{
+				_miminalNumberOfArgs = value;
 			}
 		}
 

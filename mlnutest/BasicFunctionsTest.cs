@@ -12,6 +12,35 @@ namespace mlnutest
 	[TestFixture]
 	class BasicFunctionsTest
 	{
+		string[,] quotes = new string[,]
+		{
+			{"' a", "a"},
+			{"(quote (a b))", "(a b)"},
+		};
+
+		string[,] caddrs = new string[,]
+		{
+			{"(cadr '(a b c))", "b" },
+			{"(cdar '((a b) c))", "(b)" },
+			{"(cdadr '(a (b c) d))", "(c)" },
+			{"(cddr '(a b c))", "(c)" },
+		};
+
+		[Test]
+		public void QuoteTest()
+		{
+			var eval = new ML();
+			var testcases = quotes;
+			for (int i = 0; i < testcases.GetLength(0); i++)
+			{
+				Trace.WriteLine(string.Format("Test {0}: {1}", i + 1, testcases[i, 0]));
+				var result = eval.EvalAndPrint(testcases[i, 0]);
+				Assert.AreEqual(testcases[i, 1], result);
+			}
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(quote)"));
+			Assert.Catch<ArgumentException>(() => eval.EvalAndPrint("(quote a b)"));
+		}
+
 		[Test]
 		public void CarTest()
 		{
@@ -74,6 +103,19 @@ namespace mlnutest
 			Assert.AreEqual("NIL", eval.EvalAndPrint("(null 'a)"));
 			Assert.AreEqual("NIL", eval.EvalAndPrint("(null 3)"));
 			Assert.AreEqual("NIL", eval.EvalAndPrint("(null '(a b))"));
+		}
+
+		[Test]
+		public void CaddrsTest()
+		{
+			var eval = new ML();
+			var testcases = caddrs;
+			for (int i = 0; i < testcases.GetLength(0); i++)
+			{
+				Trace.WriteLine(string.Format("Test {0}: {1}", i + 1, testcases[i, 0]));
+				var result = eval.EvalAndPrint(testcases[i, 0]);
+				Assert.AreEqual(testcases[i, 1], result);
+			}
 		}
 	}
 }

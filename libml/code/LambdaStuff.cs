@@ -8,34 +8,19 @@ namespace ml.code
 {
 	[FunctionSets]
 	class LambdaStuff
-	{		
-		[BNodeFunc(ArgumentQuoting = ArgumentQuotingTypes.All)]
+	{
+		[BNodeFunc(ArgumentQuoting = ArgumentQuotingTypes.All, MinimalNumberOfArguments = 1)]
 		static IMLNode Lambda(IListNode args, IEvaluator environment)
 		{
-			if(args == null)
-			{
-				throw new ArgumentException("LAMBDA can't be called with no args");
-			}
-
-			return new LambdaNode(args.Left, args.Right);							
+			return new LambdaNode(args.Left, args.Right);
 		}
 
-		[BNodeFunc(ArgumentQuoting=ArgumentQuotingTypes.All)]
+		[BNodeFunc(ArgumentQuoting = ArgumentQuotingTypes.All, MinimalNumberOfArguments = 2)]
 		static IMLNode Defun(IListNode args, IEvaluator environment)
 		{
-			if (args == null)
-			{
-				throw new ArgumentException("DEFUN can't be called with no args");
-			}
-
 			if (args.Left.NodeType != NodeTypes.Symbol)
 			{
 				throw new ArgumentException("Bad function name for DEFUN: " + SequenceFormatter.AsString(args.Left));
-			}
-
-			if (args.Right.NodeType != NodeTypes.List)
-			{
-				throw new ArgumentException("No lambda list for DEFUN: " + SequenceFormatter.AsString(args.Right));
 			}
 
 			var funcName = ((IAtom)args.Left).Text;
@@ -43,8 +28,21 @@ namespace ml.code
 			var body = ((IListNode)args.Right).Right;
 
 			var context = LambdaNode.CreateLambdaExecutionContext(lambdaList, body);
-			SymbolStorage.Symbols.AddFunction(funcName, context);
+			environment.Symbols.AddFunction(funcName, context);
 			return args.Left;
+		}
+
+		[BNodeFunc(NumberOfArguments = 2)]
+		static IMLNode Apply(IListNode args, IEvaluator code)
+		{
+			var argList = BasicFunctions.Check4List(args.Right, "APPLY");
+			return code.ApplyCall(args.Left, argList.Left, null);
+		}
+
+		[BNodeFunc(MinimalNumberOfArguments = 1)]
+		static IMLNode Funcall(IListNode args, IEvaluator code)
+		{
+			return code.ApplyCall(args.Left, args.Right, null);
 		}
 	}
 }

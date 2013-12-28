@@ -40,19 +40,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BadInputException.cs" />
     <Compile Include="code\BasicFunctions.cs" />
     <Compile Include="code\Evaluator.cs" />
     <Compile Include="code\FunctionLoader.cs" />
     <Compile Include="code\LambdaStuff.cs" />
     <Compile Include="code\Maths.cs" />
+    <Compile Include="code\MyFunctions.cs" />
     <Compile Include="core\Attributes.cs" />
     <Compile Include="core\BasicAtom.cs" />
     <Compile Include="core\BNodeWalker.cs" />
     <Compile Include="core\FunctionExecutionContext.cs" />
     <Compile Include="core\Interfaces.cs" />
+    <Compile Include="core\ISymbolStorage.cs" />
     <Compile Include="core\LambdaNode.cs" />
     <Compile Include="core\NodeFactory.cs" />
-    <Compile Include="DependencyResolver.cs" />
+    <Compile Include="IListNode.cs" />
     <Compile Include="ML.cs" />
     <Compile Include="NodeTypes.cs" />
     <Compile Include="core\SequenceBuilder.cs" />

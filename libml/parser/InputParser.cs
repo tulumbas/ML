@@ -123,7 +123,7 @@ namespace ml.parser
 				while (--len > 0 && sourceFeed.MoveNext());
 			}
 			catch { }
-			throw new ApplicationException(sb.ToString());
+			throw new BadInputException(sb.ToString());
 		}
 
 		private bool ReadWhitespaces()
@@ -187,6 +187,7 @@ namespace ml.parser
 			if (canContinue)
 			{
 				// store first char and check the following
+				// Tostring to distinguish from int
 				var sb = new StringBuilder(c.ToString());
 
 				var t = GetPrimitiveType(sourceFeed.Current);
@@ -194,12 +195,14 @@ namespace ml.parser
 				// if it's a digit or a char - read number
 				if (t == PrimitiveLexemTypes.Digit)
 				{
-					// read number
+					// read number: put first digit
+					sb.Append(sourceFeed.Current);
 					return ContinueReadingNumber(sb);
 				}
 				else if (t == PrimitiveLexemTypes.Character)
 				{
-					// read word
+					// read word: put first digit
+					sb.Append(sourceFeed.Current);
 					return ContinueReadingWord(sb);
 				}
 			}
@@ -243,7 +246,6 @@ namespace ml.parser
 					else
 					{
 						MakeErrorMessage("Can't read number", sb.ToString());
-						return false;
 					}
 				}
 				else if (isBreak(t))
@@ -253,23 +255,23 @@ namespace ml.parser
 				else
 				{
 					MakeErrorMessage("Error in number", sb.ToString());
-					return false;
 				}
 				canContinue = sourceFeed.MoveNext();
 			}
 
 			if (sb.Length > 0)
 			{
-				var representation = sb.ToString();
-				decimal d;
-				if (decimal.TryParse(representation, out d))
-				{
-					AddToken(TokenType.Number, d, representation);
-				}
-				else
-				{
-					MakeErrorMessage("Can't parse number", representation);
-				}
+				AddToken(TokenType.Number, 0, sb.ToString());
+				//var representation = sb.ToString();
+				//decimal d;
+				//if (decimal.TryParse(representation, out d))
+				//{
+				//   AddToken(TokenType.Number, d, representation);
+				//}
+				//else
+				//{
+				//   MakeErrorMessage("Can't parse number", representation);
+				//}
 			}
 			return canContinue;
 		}

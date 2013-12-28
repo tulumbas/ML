@@ -18,10 +18,10 @@ namespace ml.core
 		public bool IsAtom { get { return true; } }
 		public bool IsNIL { get { return NodeType == NodeTypes.NIL; } }
 
-		public override string ToString()
-		{
-			return Text;
-		}
+		//public override string ToString()
+		//{
+		//   return Text;
+		//}
 	}
 
 

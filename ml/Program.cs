@@ -33,6 +33,11 @@ namespace mlrun
 					Console.WriteLine("Error: " + ex.Message);
 				}
 			}
+
+			var l = new int[] { 1, 2, 3, 4 };
+			Console.WriteLine(l.First());
+			Console.WriteLine(l.First());
+
 			Console.WriteLine("Press any key");
 			Console.ReadKey();
 		}
