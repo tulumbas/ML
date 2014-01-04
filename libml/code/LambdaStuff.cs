@@ -36,13 +36,13 @@ namespace ml.code
 		static IMLNode Apply(IListNode args, IEvaluator code)
 		{
 			var argList = BasicFunctions.Check4List(args.Right, "APPLY");
-			return code.ApplyCall(args.Left, argList.Left, null);
+			return code.ApplyCall(args.Left, argList.Left);
 		}
 
 		[BNodeFunc(MinimalNumberOfArguments = 1)]
 		static IMLNode Funcall(IListNode args, IEvaluator code)
 		{
-			return code.ApplyCall(args.Left, args.Right, null);
+			return code.ApplyCall(args.Left, args.Right);
 		}
 	}
 }

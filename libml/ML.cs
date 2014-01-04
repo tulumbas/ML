@@ -36,7 +36,7 @@ namespace ml
 			if (parser.TokenQueue.Count > 1) // more then just EOL
 			{
 				var sequence = sequenceBuilder.Process(parser.TokenQueue);
-				return evaluator.EvalNode(sequence, null);
+				return evaluator.EvalNode(sequence);
 			}
 			return null;
 		}

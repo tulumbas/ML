@@ -9,12 +9,15 @@ namespace ml.code
 	class Evaluator: IEvaluator
 	{
 		public const string LAMBDA = "lambda";
-		private readonly IMLNode nil;		
+		private readonly IMLNode nil;
+
+		private Stack<Dictionary<string, IMLNode>> scopeStack;
 
 		#region Setup
 
 		public Evaluator(ISymbolStorage scope, INodeFactory builder)
 		{
+			scopeStack = new Stack<Dictionary<string, IMLNode>>();
 			Builder = builder;
 			Symbols = scope;
 			nil = builder.GetNIL();
@@ -45,9 +48,9 @@ namespace ml.code
 		/// <param name="arg">expression to be evaluated</param>
 		/// <param name="links">local variable scope</param>
 		/// <returns></returns>
-		public IMLNode EvalNode(IMLNode arg, Dictionary<string, IMLNode> links)
+		public IMLNode EvalNode(IMLNode arg)
 		{
-			return arg.IsAtom ? EvalAtom(arg as IAtom, links) : EvalFunc(arg as IListNode, links);
+			return arg.IsAtom ? EvalAtom(arg as IAtom) : EvalFunc(arg as IListNode);
 		}
 
 		/// <summary>
@@ -56,23 +59,23 @@ namespace ml.code
 		/// <param name="args"></param>
 		/// <param name="links"></param>
 		/// <returns></returns>
-		public IMLNode EvalSequence(IListNode args, Dictionary<string, IMLNode> links)
+		public IMLNode EvalSequence(IListNode args)
 		{
 			IMLNode result = NIL;
 			if (args != null)
 			{
 				foreach (var item in BNodeWalker.Walk(args))
 				{
-					result = EvalNode(item.Left, links);
+					result = EvalNode(item.Left);
 				}
 			}
 			return result;
 		}
 
-		public IMLNode ApplyCall(IMLNode funcNode, IMLNode argList, Dictionary<string, IMLNode> localScope)
+		public IMLNode ApplyCall(IMLNode funcNode, IMLNode argList)
 		{
 			IAtom funcAtom;
-			var fcontext = LoadFunctionDefinition(funcNode, localScope, out funcAtom);
+			var fcontext = LoadFunctionDefinition(funcNode, out funcAtom);
 			int argumentsCount = argList.IsNIL ? 0 : BNodeWalker.Walk(argList).Count();
 			CheckArgumentsCount(fcontext, funcAtom.Text, argumentsCount);
 			return CallFunction(fcontext, argList);
@@ -87,7 +90,12 @@ namespace ml.code
 
 		#region Calcualtions
 
-		private IMLNode EvalAtom(IAtom atom, Dictionary<string, IMLNode> localScope)
+		private Dictionary<string, IMLNode> GetLocalScope()
+		{
+			return scopeStack.Peek();
+		}
+
+		private IMLNode EvalAtom(IAtom atom)
 		{
 			switch (atom.NodeType)
 			{
@@ -101,6 +109,7 @@ namespace ml.code
 				case NodeTypes.TextLiteral:
 					// 1. check local scope
 					IMLNode value;
+					var localScope = GetLocalScope();
 					if (localScope != null 
 						&& localScope.TryGetValue(SymbolStorage.NormalizeName(atom.Text), out value))
 					{
@@ -128,20 +137,19 @@ namespace ml.code
 		/// </summary>
 		/// <param name="list">list with source args</param>
 		/// <returns>result of calucation</returns>
-		private IMLNode EvalFunc(IListNode list, Dictionary<string, IMLNode> localScope)
+		private IMLNode EvalFunc(IListNode list)
 		{
 			// checking function name
 			IAtom funcAtom;
 			int argumentsCount;
 
-			var fcontext = LoadFunctionDefinition(list.Left, localScope, out funcAtom);
-			var argList = EvalArgumentList(list, localScope, fcontext.ArgumentQuoting, out argumentsCount);
+			var fcontext = LoadFunctionDefinition(list.Left, out funcAtom);
+			var argList = EvalArgumentList(list, fcontext.ArgumentQuoting, out argumentsCount);
 			CheckArgumentsCount(fcontext, funcAtom.Text, argumentsCount);
 			return CallFunction(fcontext, argList);
 		}
 
-		private IMLNode CheckAndEvalLambda(IListNode expression, 
-			Dictionary<string, IMLNode> links)
+		private IMLNode CheckAndEvalLambda(IListNode expression)
 		{
 			if (expression.Left.NodeType != NodeTypes.Symbol
 				|| ((IAtom)expression.Left).Text.ToLowerInvariant() != LAMBDA)
@@ -156,7 +164,7 @@ namespace ml.code
 
 			//var args = (IBListNode)expression.Right;
 			//return LambdaStuff.Lambda(args, Instance) as LambdaNode;
-			return EvalFunc(expression, links);
+			return EvalFunc(expression);
 		}
 
 		#endregion
@@ -252,7 +260,6 @@ namespace ml.code
 		}
 
 		private IMLNode EvalArgumentList(IListNode functionExpression,
-			Dictionary<string, IMLNode> localScope,
 			ArgumentQuotingTypes quotingType,
 			out int argumentsCount)
 		{
@@ -274,7 +281,7 @@ namespace ml.code
 						|| ((quotingType == ArgumentQuotingTypes.First) && (argumentsCount > 0));
 					if (evalArg)
 					{
-						arg = EvalNode(arg, localScope);
+						arg = EvalNode(arg);
 					}
 
 					listBuilder.Append(arg);
@@ -285,7 +292,7 @@ namespace ml.code
 			return argList;
 		}
 
-		private FunctionExecutionContext LoadFunctionDefinition(IMLNode funcNode, Dictionary<string, IMLNode> links, out IAtom funcAtom)
+		private FunctionExecutionContext LoadFunctionDefinition(IMLNode funcNode, out IAtom funcAtom)
 		{
 			FunctionExecutionContext fcontext;
 			LambdaNode lambdaNode;
@@ -308,7 +315,7 @@ namespace ml.code
 					break;
 
 				case NodeTypes.List:
-					lambdaNode = CheckAndEvalLambda(funcNode as IListNode, links) as LambdaNode;
+					lambdaNode = CheckAndEvalLambda(funcNode as IListNode) as LambdaNode;
 					fcontext = lambdaNode.ExecutionContext;
 					funcAtom = lambdaNode;
 					break;
@@ -332,10 +339,14 @@ namespace ml.code
 			else
 			{
 				var newLinks = fcontext.CreateLinks(argList);
+				scopeStack.Push(newLinks);
 
 				// implicit progn:
-				return fcontext.Body.IsNIL ?
-					fcontext.Body : EvalSequence(fcontext.Body as IListNode, newLinks);
+				var result = fcontext.Body.IsNIL ? fcontext.Body : EvalSequence(fcontext.Body as IListNode);
+
+				scopeStack.Pop();
+
+				return result;
 			}
 		}
 		#endregion

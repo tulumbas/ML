@@ -78,7 +78,7 @@ namespace ml.code
 		static IMLNode Eval(IListNode args, IEvaluator environmnet)
 		{
 			var arg = args.Left;
-			return environmnet.EvalNode(arg, null);
+			return environmnet.EvalNode(arg);
 		}
 
 		[BNodeFunc(NumberOfArguments = 1, ArgumentQuoting = ArgumentQuotingTypes.All)]
@@ -104,7 +104,7 @@ namespace ml.code
 				// otherwise, 
 				// take the next element of args
 				var pair = Check4List(args.Left, "cond");
-				IMLNode condition = environmnet.EvalNode(pair.Left, null);
+				IMLNode condition = environmnet.EvalNode(pair.Left);
 				IMLNode body = pair.Right;
 
 				if (!condition.IsNIL)
@@ -118,7 +118,7 @@ namespace ml.code
 					IMLNode result;
 					while (true)
 					{
-						result = environmnet.EvalNode(sequence.Left, null);
+						result = environmnet.EvalNode(sequence.Left);
 						if (sequence.Right.IsNIL)
 						{
 							return result;

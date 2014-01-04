@@ -71,7 +71,7 @@ namespace ml.core
 		/// </summary>
 		/// <param name="arg">Node to be evaluated</param>
 		/// <returns>Node with result of evaluation</returns>
-		IMLNode EvalNode(IMLNode arg, Dictionary<string, IMLNode> links);
+		IMLNode EvalNode(IMLNode arg);
 
 		/// <summary>
 		/// Implicit PROGN. Evaluates nodes and returns last result.
@@ -79,7 +79,7 @@ namespace ml.core
 		/// <param name="args"></param>
 		/// <param name="links"></param>
 		/// <returns></returns>
-		IMLNode EvalSequence(IListNode args, Dictionary<string, IMLNode> links);
+		IMLNode EvalSequence(IListNode args);
 
 		/// <summary>
 		/// Applies function to list of args
@@ -88,7 +88,7 @@ namespace ml.core
 		/// <param name="argList"></param>
 		/// <param name="localScope"></param>
 		/// <returns></returns>
-		IMLNode ApplyCall(IMLNode funcNode, IMLNode argList, Dictionary<string, IMLNode> localScope);
+		IMLNode ApplyCall(IMLNode funcNode, IMLNode argList);
 
 		/// <summary>
 		/// Symbols cache
