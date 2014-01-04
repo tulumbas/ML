@@ -6,10 +6,10 @@ using NUnit.Framework;
 using ml;
 using ml.core;
 
-namespace mlnutest
+namespace ml._UnitTests
 {
 	[TestFixture]
-	public class NumbersTest
+	public class NumbersTests
 	{		
 		[Test]
 		public void IntegerNumbersInputTest()
@@ -35,22 +35,28 @@ namespace mlnutest
 		{
 			var eval = new ML();
 			var node = eval.EvalCommand("1000000000.0");
-			Assert.AreEqual(NodeTypes.DecimalNumber, node.NodeType);
+			Assert.AreEqual(NodeTypes.RealNumber, node.NodeType);
 			node = eval.EvalCommand("-1000000000.0");
-			Assert.AreEqual(NodeTypes.DecimalNumber, node.NodeType);
+			Assert.AreEqual(NodeTypes.RealNumber, node.NodeType);
 		}
 
 		[Test]
 		public void MinusPlusTest()
 		{
 			var eval = new ML();
-			Assert.AreEqual("-abc", eval.EvalAndPrint("'-abc"));
-			Assert.AreEqual("-3.0", eval.EvalAndPrint("-3.0"));
-			Assert.AreEqual("-13.05", eval.EvalAndPrint("-13.05"));
-			Assert.AreEqual("+3.0", eval.EvalAndPrint("+3.0"));
-			Assert.AreEqual("+13.05", eval.EvalAndPrint("+13.05"));
-			Assert.AreEqual("-", eval.EvalAndPrint("'-"));
-			Assert.AreEqual("+", eval.EvalAndPrint("'+"));
+
+			Common.RunTestCases(eval,
+				new string[,]
+				{
+					{"'-abc", "-abc"},
+					{"-3.0", "-3.0" },
+					{"-13.05", "-13.05"},
+					{"'+3.0", "+3.0"},
+					{"'+13.05","+13.05"},
+					{"'-", "-"},
+					{"'+", "+"},
+				});
+			
 			var node = eval.EvalCommand("'--123");
 			Assert.AreEqual(NodeTypes.Symbol, node.NodeType);
 		}
@@ -63,5 +69,18 @@ namespace mlnutest
 			Assert.Catch<BadInputException>(() => eval.EvalAndPrint("0.0.0"));
 			Assert.Catch<BadInputException>(() => eval.EvalAndPrint("0.a"));
 		}
+
+		[Test]
+		public void BigNumCreationTest()
+		{
+			var bn = BigNum.CreateBigNum("-123456789012345678");
+			Assert.AreEqual(2, bn.Nonets.Length);
+			Assert.AreEqual(-1, bn.Sign);
+			Assert.AreEqual("-123456789012345678", bn.PrintNumber());
+			Assert.AreEqual(12345678, bn.Nonets[0]);
+			Assert.AreEqual(123456789, bn.Nonets[1]);
+			bn = BigNum.CreateBigNum("123");
+			Assert.AreEqual(1, bn.Nonets.Length);
+		}		
 	}
 }

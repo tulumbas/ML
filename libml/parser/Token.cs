@@ -9,6 +9,6 @@ namespace ml.parser
 	{
 		public TokenType TokenType;
 		public string Value;
-		public decimal NumericValue;
+		//public decimal NumericValue;
 	}
 }

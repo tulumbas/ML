@@ -9,7 +9,7 @@ namespace ml.core
 	{
 		class NodeEnumerator : IEnumerator<IListNode>
 		{
-			bool isEmpty;
+			bool isEmpty, enumeratedAlready;
 			IListNode first, _current;
 
 			public NodeEnumerator(IMLNode first)
@@ -51,25 +51,32 @@ namespace ml.core
 					return false;
 				}
 
-				if (_current != null && _current.Right.IsNIL)
-				{
-					_current = null;
-					return false;
-				}
-				
 				if (_current == null)
 				{
-					_current = first;
+					if (!enumeratedAlready)
+					{
+						_current = first;
+						return true;
+					}
+					return false;
+				}
+				else if (_current.Right.IsNIL)
+				{
+					_current = null;
+					enumeratedAlready = true;
+					return false;
+				}
+				else
+				{
+					_current = _current.Right as IListNode;
 					return true;
 				}
-
-				_current = _current.Right as IListNode;
-				return true;
 			}
 
 			public void Reset()
 			{
 				_current = null;
+				enumeratedAlready = false;
 			}
 		}
 

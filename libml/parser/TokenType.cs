@@ -14,6 +14,7 @@ namespace ml.parser
 		Word, // atom made of chars
 		Quote,
 		TextLiteral, // d-quoted text
-		Number,
+		FloatPoint,
+		Integer
 	}
 }

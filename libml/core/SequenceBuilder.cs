@@ -103,8 +103,12 @@ namespace ml.core
 
 			switch (Q.CurrentType)
 			{
-				case TokenType.Number:
-					atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.Number);
+				case TokenType.FloatPoint:
+					atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.RealNumber);
+					break;
+
+				case TokenType.Integer:
+					atomNode = Builder.CreateAtom(Q.Current.Value, NodeTypes.IntegerNumber);
 					break;
 
 				case TokenType.Word:

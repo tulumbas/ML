@@ -77,6 +77,12 @@ namespace ml.code
 			CheckArgumentsCount(fcontext, funcAtom.Text, argumentsCount);
 			return CallFunction(fcontext, argList);
 		}
+
+		public INumberConverter GetNumberConverter()
+		{
+			return new NumberConverter();
+		}
+
 		#endregion
 
 		#region Calcualtions
@@ -87,7 +93,7 @@ namespace ml.code
 			{
 				case NodeTypes.NIL: 					
 				case NodeTypes.T:
-				case NodeTypes.DecimalNumber:
+				case NodeTypes.RealNumber:
 				case NodeTypes.IntegerNumber:
 					return atom;
 

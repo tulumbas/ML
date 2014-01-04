@@ -11,7 +11,7 @@ namespace ml
 		TextLiteral = 0x100,
 
 		Number = 0x200,
-		DecimalNumber = 0x600,
+		RealNumber = 0x600,
 		IntegerNumber = 0xa00,
 		
 		Lambda = 0x8000,

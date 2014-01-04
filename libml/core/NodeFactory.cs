@@ -16,6 +16,11 @@ namespace ml.core
 			T = new BasicAtom("T", NodeTypes.T);
 		}
 
+		public NodeFactory()
+		{
+			scope = new SymbolStorage();
+		}
+
 		public NodeFactory(ISymbolStorage symbols)
 		{
 			scope = symbols;
@@ -30,9 +35,11 @@ namespace ml.core
 					scope.AddSymbol(value);
 					return new BasicAtom(value, atomType);
 
-				case NodeTypes.Number:
-					return new BasicAtom(value, value.Contains('.') ? 
-						NodeTypes.DecimalNumber : NodeTypes.IntegerNumber);
+				case NodeTypes.RealNumber:
+					return new RealNumber(value);
+
+				case NodeTypes.IntegerNumber:
+					return BigNum.CreateBigNum(value);
 
 				default:
 					throw new ArgumentException("Can't create atom with nodeType: " + atomType.ToString());
@@ -65,6 +72,14 @@ namespace ml.core
 			var builder = new XListBuilder(GetNIL());
 			builder.Append(firstItemValue);
 			return builder;
+		}
+
+		public ISymbolStorage SymbolScope
+		{
+			get
+			{
+				return scope;
+			}
 		}
 	}
 

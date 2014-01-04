@@ -9,37 +9,37 @@ namespace mlrun
 	{
 		static void Main(string[] args)
 		{
-			var strings = new string[] 			
-			{
-				"(cond (() ()) ( t ()))",
-				"(defun zz (a b c) (cons c (cons (car a) (cdr b))))",
-				"(zz '(qq ww ee) '(rr tt yy) '(uu ii oo))"
-			};
-
 			var eval = new ml.ML();
-			
-			foreach (var line in strings)
+
+			Console.WriteLine(eval.EvalAndPrint("(* 1000000 1000000)"));			
+
+			Console.WriteLine("Please type single line expressions");
+
+			do
 			{
-				Console.WriteLine("Source: "+ line);
+				Console.WriteLine();
+				Console.Write("#: ");
+				var line = Console.ReadLine();
+
+				if (line.Trim().ToLowerInvariant() == "(exit)")
+				{
+					break;
+				}
+
 				try
 				{
-					var result = eval.EvalCommand(line);
-					Console.Write("Result: ");
-					Console.WriteLine(ml.SequenceFormatter.AsString(result));
-					Console.WriteLine();
+					var result = eval.EvalAndPrint(line);
+					Console.WriteLine("Result: " + result);
 				}
 				catch (Exception ex)
 				{
 					Console.WriteLine("Error: " + ex.Message);
 				}
 			}
+			while (true);
 
-			var l = new int[] { 1, 2, 3, 4 };
-			Console.WriteLine(l.First());
-			Console.WriteLine(l.First());
-
-			Console.WriteLine("Press any key");
-			Console.ReadKey();
+			//Console.WriteLine("Press any key");
+			//Console.ReadKey();
 		}
 	}
 }

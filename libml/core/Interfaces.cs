@@ -8,7 +8,7 @@ namespace ml.core
 	/// <summary>
 	/// Common properties of atom
 	/// </summary>
-	interface IAtom: IMLNode 
+	public interface IAtom: IMLNode 
 	{
 		string Text { get; }
 	}
@@ -23,6 +23,7 @@ namespace ml.core
 		IAtom GetNIL();
 		IListBuilder CreateListBuilder();
 		IListBuilder CreateListBuilder(IMLNode firstItemValue);
+		ISymbolStorage SymbolScope { get;  }
 	}
 
 	/// <summary>
@@ -47,6 +48,12 @@ namespace ml.core
 		/// </summary>
 		/// <param name="list">list to be added</param>
 		void Merge(IListNode list);
+	}
+
+	interface INumberConverter
+	{
+		//bool NeedsConversion(NodeTypes from, NodeTypes to);
+		bool CompareConvertType(ref ANumber n1, ref ANumber n2);
 	}
 
 	/// <summary>
@@ -87,5 +94,10 @@ namespace ml.core
 		/// Symbols cache
 		/// </summary>
 		ISymbolStorage Symbols { get; }
+
+
+		INumberConverter GetNumberConverter();
 	}
+
+
 }

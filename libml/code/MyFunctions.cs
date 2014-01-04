@@ -29,5 +29,22 @@ namespace ml.code
 					return code.NIL;
 			}
 		}
+
+		[BNodeFunc(NumberOfArguments = 1)]
+		static IMLNode Reverse(IListNode args, IEvaluator code)
+		{
+			if (args.Left.IsNIL)
+			{
+				return code.NIL;
+			}
+			var sourceList = BasicFunctions.Check4List(args.Left, "Reverse");
+			var elements = BNodeWalker.Walk(sourceList).ToArray();
+			var result = code.Builder.CreateListBuilder();
+			for (int i = elements.Length - 1; i >= 0; i--)
+			{
+				result.Append(elements[i].Left);
+			}
+			return result.GetList();
+		}
 	}
 }

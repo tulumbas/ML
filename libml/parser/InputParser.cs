@@ -261,17 +261,7 @@ namespace ml.parser
 
 			if (sb.Length > 0)
 			{
-				AddToken(TokenType.Number, 0, sb.ToString());
-				//var representation = sb.ToString();
-				//decimal d;
-				//if (decimal.TryParse(representation, out d))
-				//{
-				//   AddToken(TokenType.Number, d, representation);
-				//}
-				//else
-				//{
-				//   MakeErrorMessage("Can't parse number", representation);
-				//}
+				AddToken(hasDot ? TokenType.FloatPoint : TokenType.Integer, sb.ToString());
 			}
 			return canContinue;
 		}
@@ -328,15 +318,15 @@ namespace ml.parser
 			TokenQueue.Add(new Token { TokenType = tokenType, Value = value });
 		}
 
-		private void AddToken(TokenType tokenType, decimal val, string representation)
-		{
-			TokenQueue.Add(new Token
-			{
-				TokenType = tokenType,
-				NumericValue = val,
-				Value = representation
-			});
-		}
+		//private void AddToken(TokenType tokenType, decimal val, string representation)
+		//{
+		//   TokenQueue.Add(new Token
+		//   {
+		//      TokenType = tokenType,
+		//      NumericValue = val,
+		//      Value = representation
+		//   });
+		//}
 
 		private void ResetParser()
 		{
@@ -363,11 +353,6 @@ namespace ml.parser
 				case '\\': return PrimitiveLexemTypes.Backslash;
 
 				case ';': return PrimitiveLexemTypes.Semicolon;
-			}
-
-			if (char.IsWhiteSpace(c)) // Unicode extended
-			{
-				return PrimitiveLexemTypes.Whitespace;
 			}
 
 			if (char.IsDigit(c))

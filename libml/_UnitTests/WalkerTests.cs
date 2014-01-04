@@ -6,10 +6,10 @@ using NUnit.Framework;
 using ml;
 using ml.core;
 
-namespace mlnutest
+namespace ml._UnitTests
 {
 	[TestFixture]
-	public class WalkerTest
+	public class WalkerTests
 	{
 		[Test]
 		public void EmptyWalkerTest()

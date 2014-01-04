@@ -6,10 +6,10 @@ using NUnit.Framework;
 using ml;
 using System.Diagnostics;
 
-namespace mlnutest
+namespace ml._UnitTests
 {
 	[TestFixture]
-	public class MyFunctionsTest
+	public class MyFunctionsTests
 	{
 		string[,] isdefined = new string[,]
 			{
