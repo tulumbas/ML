@@ -9,7 +9,7 @@ namespace mlrun
 	{
 		static void Main(string[] args)
 		{
-			var eval = new ml.ML();
+			var eval = new ml.ML(10);
 
 			var initialStrings = new string[]
 			{

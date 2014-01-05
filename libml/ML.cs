@@ -16,6 +16,7 @@ namespace ml
 		IEvaluator evaluator;
 		AutoResetEvent evt;
 		IMLNode evaluationResult;
+		int stackSize;
 
 		static ML()
 		{
@@ -32,9 +33,18 @@ namespace ml
 			evaluator = new Evaluator(upperScope, factory);
 		}
 
+		public ML(int stackSizeInMegs)
+			:this()
+		{
+			this.stackSize = stackSizeInMegs * 1024 * 1024;
+		}
+
 		public IMLNode EvalCommand(string expression)
 		{
-			var th = new Thread(this.EvalCommandInThread, 10 * 1024 * 1024);
+			var th = stackSize > 0
+				? new Thread(this.EvalCommandInThread, stackSize)
+				: new Thread(this.EvalCommandInThread);
+
 			evt = new AutoResetEvent(false);
 			th.Start(expression);
 			evt.WaitOne();
