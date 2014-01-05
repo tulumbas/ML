@@ -5,14 +5,17 @@ using System.Text;
 using ml.parser;
 using ml.core;
 using ml.code;
+using System.Threading;
 
 namespace ml
 {
 	public class ML
-	{
+	{		
 		static InputParser parser;
 		SequenceBuilder sequenceBuilder;		
 		IEvaluator evaluator;
+		AutoResetEvent evt;
+		IMLNode evaluationResult;
 
 		static ML()
 		{
@@ -31,20 +34,33 @@ namespace ml
 
 		public IMLNode EvalCommand(string expression)
 		{
+			var th = new Thread(this.EvalCommandInThread, 10 * 1024 * 1024);
+			evt = new AutoResetEvent(false);
+			th.Start(expression);
+			evt.WaitOne();
+			GC.Collect();
+			return evaluationResult;
+		}
+
+		private void EvalCommandInThread(object command)
+		{
+			evaluationResult = null;
+			var expression = command as string;
 			var feeder = new ParserFeeder(expression);
 			parser.ParseSource(feeder);
 			if (parser.TokenQueue.Count > 1) // more then just EOL
 			{
 				var sequence = sequenceBuilder.Process(parser.TokenQueue);
-				return evaluator.EvalNode(sequence);
+				evaluationResult = evaluator.EvalNode(sequence);
 			}
-			return null;
+			evt.Set();
 		}
 
 		public string EvalAndPrint(string expression)
 		{
 			var result = EvalCommand(expression);
-			return SequenceFormatter.AsString(result);
+			var output = SequenceFormatter.AsString(result);			
+			return output;
 		}
 	}
 }
