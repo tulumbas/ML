@@ -11,7 +11,18 @@ namespace mlrun
 		{
 			var eval = new ml.ML();
 
-			Console.WriteLine(eval.EvalAndPrint("(* 1000000 1000000)"));			
+			var initialStrings = new string[]
+			{
+				"(defun ! (n) (cond ((= n 1) 1) (t (* n (! (- n 1))))))"
+			};
+
+			foreach (var item in initialStrings)
+			{
+				Console.WriteLine(item);
+				var result = eval.EvalAndPrint(item);
+				Console.WriteLine(result);
+				Console.WriteLine();
+			}
 
 			Console.WriteLine("Please type single line expressions");
 

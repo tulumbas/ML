@@ -162,9 +162,15 @@ namespace ml.code
 		}
 
 		[BNodeFunc(NumberOfArguments = 1, Alias = "null")]
-		static IMLNode IsNullP(IListNode args, IEvaluator environment)
+		public static IMLNode IsNullP(IListNode args, IEvaluator environment)
 		{
 			return args.Left.IsNIL ? environment.Builder.GetT() : environment.NIL;			
+		}
+
+		[BNodeFunc(NumberOfArguments = 1)]
+		public static IMLNode Not(IListNode args, IEvaluator code)
+		{
+			return IsNullP(args, code);
 		}
 
 		#endregion

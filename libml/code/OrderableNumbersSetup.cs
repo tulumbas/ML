@@ -6,10 +6,10 @@ using ml.core;
 
 namespace ml.code
 {
-	//[FunctionSets(SetupMethod = "SetupOrderableNumbers")]
+	[FunctionSets(SetupMethod = "SetupComparisons")]
 	class OrderableNumbersSetup
 	{		
-		public void SetupOrderableNumbers(ISymbolStorage storage, INodeFactory builder)
+		public static void SetupComparisons(ISymbolStorage storage, INodeFactory builder)
 		{
 
 		}

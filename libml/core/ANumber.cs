@@ -42,12 +42,12 @@ namespace ml.core
 
 		public static bool operator ==(ANumber op1, ANumber op2)
 		{
-			return (op1 != null) && op1.IsEqualTo(op2);
+			return !object.ReferenceEquals(op1, null) && op1.IsEqualTo(op2);
 		}
 
 		public static bool operator !=(ANumber op1, ANumber op2)
 		{
-			return (op1 == null) || !op1.IsEqualTo(op2);
+			return object.ReferenceEquals(op1, null) || !op1.IsEqualTo(op2);
 		}
 
 		public static ANumber operator +(ANumber A, ANumber B)
@@ -75,6 +75,16 @@ namespace ml.core
 			return A.Divide(B);
 		}
 		#endregion
+
+		public static ANumber Check4Number(IMLNode node)
+		{
+			if ((node.NodeType & NodeTypes.Number) == 0)
+			{
+				throw new NotANumberException(SequenceFormatter.AsString(node));
+			}
+
+			return node as ANumber;
+		}
 	}
 
 	abstract class OrderableNumber: ANumber
@@ -101,5 +111,14 @@ namespace ml.core
 			return B.IsGreater(A) || A.IsEqualTo(B);
 		}
 
+		public static ANumber Check4OrderableNumber(IMLNode node)
+		{
+			if (node is OrderableNumber)
+			{
+				return node as OrderableNumber;
+			}
+
+			throw new NotANumberException("can't compare: " + SequenceFormatter.AsString(node));
+		}
 	}
 }

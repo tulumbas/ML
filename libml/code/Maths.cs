@@ -22,7 +22,7 @@ namespace ml.code
 			var numberConverter = context.GetNumberConverter();
 			foreach (var item in BNodeWalker.Walk(args))
 			{
-				var arg = Check4Number(item.Left);
+				var arg = ANumber.Check4Number(item.Left);
 				numberConverter.CompareConvertType(ref result, ref arg);
 				result += arg;
 			}
@@ -32,7 +32,7 @@ namespace ml.code
 		[BNodeFunc(Alias = "-", MinimalNumberOfArguments = 1)]
 		static IMLNode Minus(IListNode args, IEvaluator context)
 		{
-			ANumber result = Check4Number(args.Left);
+			ANumber result = ANumber.Check4Number(args.Left);
 			if (args.Right.IsNIL)
 			{
 				return -result;
@@ -42,7 +42,7 @@ namespace ml.code
 				var numberConverter = context.GetNumberConverter();
 				foreach (var item in BNodeWalker.Walk(args).Skip(1))
 				{
-					var arg = Check4Number(item.Left);
+					var arg = ANumber.Check4Number(item.Left);
 					numberConverter.CompareConvertType(ref result, ref arg);
 					result -= arg;
 				}
@@ -57,7 +57,7 @@ namespace ml.code
 			var numberConverter = context.GetNumberConverter();
 			foreach (var item in BNodeWalker.Walk(args))
 			{
-				var arg = Check4Number(item.Left);
+				var arg = ANumber.Check4Number(item.Left);
 				numberConverter.CompareConvertType(ref result, ref arg);
 				result *= arg;
 			}
@@ -67,7 +67,7 @@ namespace ml.code
 		[BNodeFunc(Alias = "/", MinimalNumberOfArguments = 1)]
 		static IMLNode Divide(IListNode args, IEvaluator context)
 		{
-			ANumber arg1 = Check4Number(args.Left);
+			ANumber arg1 = ANumber.Check4Number(args.Left);
 			var numberConverter = context.GetNumberConverter();
 			if (args.Right.IsNIL)
 			{
@@ -79,7 +79,7 @@ namespace ml.code
 			{
 				foreach (var item in BNodeWalker.Walk(args).Skip(1))
 				{
-					var arg = Check4Number(item.Left);
+					var arg = ANumber.Check4Number(item.Left);
 					numberConverter.CompareConvertType(ref arg1, ref arg);
 					arg1 /= arg;
 				}
@@ -93,14 +93,27 @@ namespace ml.code
 			throw new NotImplementedException();
 		}
 
-		public static ANumber Check4Number(IMLNode node)
+		[BNodeFunc(MinimalNumberOfArguments = 2, Alias = "=")]
+		static IMLNode NumberIsEqualTo(IListNode args, IEvaluator code)
 		{
-			if ((node.NodeType & NodeTypes.Number) == 0)
+			ANumber arg1 = ANumber.Check4Number(args.Left);
+			foreach (var node in BNodeWalker.Walk(args).Skip(1))
 			{
-				throw new NotANumberException(SequenceFormatter.AsString(node));
+				var arg = ANumber.Check4Number(node.Left);
+				if (arg1 != arg)
+				{
+					return code.NIL;
+				}
 			}
-
-			return node as ANumber;
+			return code.Builder.GetT();
 		}
+
+		[BNodeFunc(MinimalNumberOfArguments = 2, Alias = "!=")]
+		static IMLNode NumberIsNotEqualTo(IListNode args, IEvaluator code)
+		{
+			var result = NumberIsEqualTo(args, code);
+			return result.IsNIL ? code.Builder.GetT() : code.NIL;
+		}
+
 	}
 }
