@@ -81,11 +81,6 @@ namespace ml.code
 			return CallFunction(fcontext, argList);
 		}
 
-		public INumberConverter GetNumberConverter()
-		{
-			return new NumberConverter();
-		}
-
 		#endregion
 
 		#region Calcualtions

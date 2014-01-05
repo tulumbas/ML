@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ml.core
+namespace ml.core.numbers
 {
 	class BigNum: OrderableNumber
 	{

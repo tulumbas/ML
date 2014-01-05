@@ -16,6 +16,7 @@ namespace ml
 		IEvaluator evaluator;
 		AutoResetEvent evt;
 		IMLNode evaluationResult;
+		Exception error;
 		int stackSize;
 
 		static ML()
@@ -41,13 +42,24 @@ namespace ml
 
 		public IMLNode EvalCommand(string expression)
 		{
-			var th = stackSize > 0
+			var thread = stackSize > 0
 				? new Thread(this.EvalCommandInThread, stackSize)
 				: new Thread(this.EvalCommandInThread);
 
 			evt = new AutoResetEvent(false);
-			th.Start(expression);
+			thread.Start(expression);
 			evt.WaitOne();
+
+			if (evaluationResult == null)
+			{
+				if (error != null)
+				{
+					throw error;
+				}
+
+				throw new InvalidOperationException("Calculation outcome is null");
+			}
+
 			GC.Collect();
 			return evaluationResult;
 		}
@@ -55,13 +67,20 @@ namespace ml
 		private void EvalCommandInThread(object command)
 		{
 			evaluationResult = null;
-			var expression = command as string;
-			var feeder = new ParserFeeder(expression);
-			parser.ParseSource(feeder);
-			if (parser.TokenQueue.Count > 1) // more then just EOL
+			try
 			{
-				var sequence = sequenceBuilder.Process(parser.TokenQueue);
-				evaluationResult = evaluator.EvalNode(sequence);
+				var expression = command as string;
+				var feeder = new ParserFeeder(expression);
+				parser.ParseSource(feeder);
+				if (parser.TokenQueue.Count > 1) // more then just EOL
+				{
+					var sequence = sequenceBuilder.Process(parser.TokenQueue);
+					evaluationResult = evaluator.EvalNode(sequence);
+				}
+			}
+			catch (Exception ex)
+			{
+				error = ex;
 			}
 			evt.Set();
 		}

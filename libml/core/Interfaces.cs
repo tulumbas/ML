@@ -50,12 +50,6 @@ namespace ml.core
 		void Merge(IListNode list);
 	}
 
-	interface INumberConverter
-	{
-		//bool NeedsConversion(NodeTypes from, NodeTypes to);
-		bool CompareConvertType(ref ANumber n1, ref ANumber n2);
-	}
-
 	/// <summary>
 	/// Evaluation environment, passed to function 
 	/// and giving access to node builder and evaluation mechanism
@@ -94,9 +88,6 @@ namespace ml.core
 		/// Symbols cache
 		/// </summary>
 		ISymbolStorage Symbols { get; }
-
-
-		INumberConverter GetNumberConverter();
 	}
 
 

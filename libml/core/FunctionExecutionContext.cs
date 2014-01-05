@@ -50,7 +50,12 @@ namespace ml.core
 		public static FunctionExecutionContext
 			CreateCompiled(Func<IListNode, IEvaluator, IMLNode> compiledDelegate)
 		{
-			var ctx = new FunctionExecutionContext { IsCompiled = true, Method = compiledDelegate };
+			var ctx = new FunctionExecutionContext { 
+				IsCompiled = true, 
+				Method = compiledDelegate,
+				MinimalNumberOfArguments = -1,
+				NumberOfArguments = -1
+			};
 			return ctx;
 		}
 
@@ -61,7 +66,8 @@ namespace ml.core
 				IsCompiled = false,
 				Body = body,
 				ParameterNames = lambdaList.ToArray(),
-				NumberOfArguments = lambdaList.Count()
+				NumberOfArguments = lambdaList.Count(),
+				MinimalNumberOfArguments = -1
 			};
 			return ctx;
 		}

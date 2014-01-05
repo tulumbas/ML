@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using ml.core;
 using System.Diagnostics;
+using ml.core.numbers;
 
 namespace ml._UnitTests
 {

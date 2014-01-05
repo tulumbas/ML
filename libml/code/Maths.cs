@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ml.core;
+using ml.core.numbers;
 
 namespace ml.code
 {
@@ -19,7 +20,7 @@ namespace ml.code
 		static IMLNode Add(IListNode args, IEvaluator context)
 		{
 			ANumber result = BigNum.Zero;
-			var numberConverter = context.GetNumberConverter();
+			var numberConverter = ANumber.GetNumberConverter();
 			foreach (var item in BNodeWalker.Walk(args))
 			{
 				var arg = ANumber.Check4Number(item.Left);
@@ -39,7 +40,7 @@ namespace ml.code
 			}
 			else
 			{
-				var numberConverter = context.GetNumberConverter();
+				var numberConverter = ANumber.GetNumberConverter();
 				foreach (var item in BNodeWalker.Walk(args).Skip(1))
 				{
 					var arg = ANumber.Check4Number(item.Left);
@@ -54,7 +55,7 @@ namespace ml.code
 		static IMLNode Multiply(IListNode args, IEvaluator context)
 		{
 			ANumber result = BigNum.One;
-			var numberConverter = context.GetNumberConverter();
+			var numberConverter = ANumber.GetNumberConverter();
 			foreach (var item in BNodeWalker.Walk(args))
 			{
 				var arg = ANumber.Check4Number(item.Left);
@@ -68,7 +69,7 @@ namespace ml.code
 		static IMLNode Divide(IListNode args, IEvaluator context)
 		{
 			ANumber arg1 = ANumber.Check4Number(args.Left);
-			var numberConverter = context.GetNumberConverter();
+			var numberConverter = ANumber.GetNumberConverter();
 			if (args.Right.IsNIL)
 			{
 				ANumber d = BigNum.One;
@@ -107,6 +108,7 @@ namespace ml.code
 			}
 			return code.Builder.GetT();
 		}
+
 
 		[BNodeFunc(MinimalNumberOfArguments = 2, Alias = "!=")]
 		static IMLNode NumberIsNotEqualTo(IListNode args, IEvaluator code)

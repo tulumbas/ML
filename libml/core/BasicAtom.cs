@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ml.core.numbers;
 
 namespace ml.core
 {
@@ -33,23 +34,6 @@ namespace ml.core
 		//   return Text;
 		//}
 	}
-
-
-	//class IntegerNumber : BasicAtom //, IIntegerNumber
-	//{
-	//   BigNum bignum;
-
-	//   public int[] Nonets { get { return bignum.Nonets; } }
-	//   public int Sign { get { return bignum.Sign; } }
-
-	//   internal IntegerNumber(string digitString)
-	//      : base(NodeTypes.IntegerNumber)
-	//   {
-	//      bignum = BigNum.CreateBigNum(digitString);
-	//      Text = bignum.PrintNumber();
-	//   }
-
-	//}
 
 	class RealNumber : BasicAtom
 	{
