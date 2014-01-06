@@ -48,74 +48,75 @@ namespace ml.code
 		private static IMLNode CompareNumbers(IListNode args, IEvaluator code,
 			Func<OrderableNumber, OrderableNumber, bool> predicate)
 		{
-			var arg1 = OrderableNumber.Check4OrderableNumber(args.Left);
+			var argL = OrderableNumber.Check4OrderableNumber(args.Left);
 			foreach (var node in BNodeWalker.Walk(args).Skip(1))
 			{
-				var arg = OrderableNumber.Check4OrderableNumber(node.Left);
-				if (!predicate(arg1, arg))
+				var argR = OrderableNumber.Check4OrderableNumber(node.Left);
+				if (!predicate(argL, argR))
 				{
 					return code.NIL;
 				}
+				argL = argR;
 			}
 			return code.Builder.GetT();
 		}
 
-		public static void SetupComparisonsUsingExpressions(ISymbolStorage storage, INodeFactory builder)
-		{
-			var convertInfo = typeof(OrderableNumber).GetMethod("Check4OrderableNumber", BindingFlags.Public | BindingFlags.Static);
+		//public static void SetupComparisonsUsingExpressions(ISymbolStorage storage, INodeFactory builder)
+		//{
+		//   var convertInfo = typeof(OrderableNumber).GetMethod("Check4OrderableNumber", BindingFlags.Public | BindingFlags.Static);
 
-			// parameters
-			var args = Expression.Parameter(typeof(IListNode), "args");
-			var code = Expression.Parameter(typeof(IEvaluator), "code");
-			var result = Expression.Parameter(typeof(IMLNode), "result");
+		//   // parameters
+		//   var args = Expression.Parameter(typeof(IListNode), "args");
+		//   var code = Expression.Parameter(typeof(IEvaluator), "code");
+		//   var result = Expression.Parameter(typeof(IMLNode), "result");
 
-			// local vars
-			var nil = Expression.Constant(builder.GetNIL());
-			var t = Expression.Constant(builder.GetT());
+		//   // local vars
+		//   var nil = Expression.Constant(builder.GetNIL());
+		//   var t = Expression.Constant(builder.GetT());
 
-			var node = Expression.Variable(typeof(IMLNode), "node");
-			var numL = Expression.Variable(typeof(OrderableNumber), "numL");
-			var numR = Expression.Variable(typeof(OrderableNumber), "numR");
-			var stepForward = Expression.Assign(node,
-				Expression.Property(Expression.Convert(node, typeof(IListNode)), "Right"));
-			var getNumber = Expression.Call(convertInfo,
-				Expression.Property(Expression.Convert(node, typeof(IListNode)), "Left"));
+		//   var node = Expression.Variable(typeof(IMLNode), "node");
+		//   var numL = Expression.Variable(typeof(OrderableNumber), "numL");
+		//   var numR = Expression.Variable(typeof(OrderableNumber), "numR");
+		//   var stepForward = Expression.Assign(node,
+		//      Expression.Property(Expression.Convert(node, typeof(IListNode)), "Right"));
+		//   var getNumber = Expression.Call(convertInfo,
+		//      Expression.Property(Expression.Convert(node, typeof(IListNode)), "Left"));
 
-			var label = Expression.Label();
+		//   var label = Expression.Label();
 
-			var loop = Expression.Loop(
-				Expression.IfThenElse(
-					Expression.Property(node, "IsNil"),
-					Expression.Block(
-						Expression.Assign(result, t),
-						Expression.Break(label)),
-					Expression.Block(
-						Expression.Assign(numR, getNumber),
-						Expression.IfThen(
-							Expression.GreaterThanOrEqual(numL, numR),
-							Expression.Block(
-								Expression.Assign(result, nil),
-								Expression.Break(label)
-							)),
-						Expression.Assign(numL, numR),
-						stepForward)),
-				label);
+		//   var loop = Expression.Loop(
+		//      Expression.IfThenElse(
+		//         Expression.Property(node, "IsNil"),
+		//         Expression.Block(
+		//            Expression.Assign(result, t),
+		//            Expression.Break(label)),
+		//         Expression.Block(
+		//            Expression.Assign(numR, getNumber),
+		//            Expression.IfThen(
+		//               Expression.GreaterThanOrEqual(numL, numR),
+		//               Expression.Block(
+		//                  Expression.Assign(result, nil),
+		//                  Expression.Break(label)
+		//               )),
+		//            Expression.Assign(numL, numR),
+		//            stepForward)),
+		//      label);
 
-			var mainBody =
-				Expression.Block(
-					new[] { result, node, numL, numR },
-					Expression.Assign(result, args),
-					Expression.Assign(node, args),
-					Expression.Assign(numL, getNumber),
-					stepForward,
-					loop,					
-					result
-					);
+		//   var mainBody =
+		//      Expression.Block(
+		//         new[] { result, node, numL, numR },
+		//         Expression.Assign(result, args),
+		//         Expression.Assign(node, args),
+		//         Expression.Assign(numL, getNumber),
+		//         stepForward,
+		//         loop,					
+		//         result
+		//         );
 
-			var fe = FunctionExecutionContext.CreateCompiled(Expression.Lambda<Func<IListNode, IEvaluator, IMLNode>>(mainBody, args, code).Compile());
-			fe.MinimalNumberOfArguments = 2;
+		//   var fe = FunctionExecutionContext.CreateCompiled(Expression.Lambda<Func<IListNode, IEvaluator, IMLNode>>(mainBody, args, code).Compile());
+		//   fe.MinimalNumberOfArguments = 2;
 
-			storage.AddFunction("<", fe);
-		}
+		//   storage.AddFunction("<", fe);
+		//}
 	}
 }

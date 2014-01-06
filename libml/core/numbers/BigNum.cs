@@ -328,11 +328,14 @@ namespace ml.core.numbers
 		private static bool IsGreater(BigNum b1, BigNum b2)
 		{
 			if (b1.sign != b2.sign) return b1.sign > b2.sign;
-			if (b1.length > b2.length) return b1.sign == 1;
-			if (b1.length < b2.length) return b2.sign == 1;
+
+			var isPositive = b1.sign == 1;
+			if (b1.length > b2.length) return isPositive;
+			if (b1.length < b2.length) return !isPositive;
 			for (int i = b1.length - 1; i >= 0; i--)
-			{
-				if (b1.nonets[i] > b2.nonets[i]) return b1.sign == 1;
+			{				
+				if (b1.nonets[i] > b2.nonets[i]) return isPositive;
+				if (b1.nonets[i] < b2.nonets[i]) return !isPositive;
 			}
 			return false;
 		}
